@@ -16,7 +16,7 @@ jobs:
 
 
 
-  SetUp Docker:
+  docker:
     runs-on: ubuntu-latest
     needs: blank
     steps:
