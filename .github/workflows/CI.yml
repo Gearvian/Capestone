@@ -27,6 +27,6 @@ jobs:
         with: 
           push: true
           tags: |
-            gearvian/flask-github-actions:latest
-            gearvian/flask-github-actions:${{ github.sha }}
-          cache-from: gearvian/flask-github-actions:latest
+            gearvian/capestone:latest
+            gearvian/capestone:${{ github.sha }}
+          cache-from: gearvian/capestone:latest
