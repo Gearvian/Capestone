@@ -1,9 +1,20 @@
 services:
-  test:
-    build: .
+  app:
+    build:  
+      context: .  
+      dockerfile: Dockerfile  
     ports:
-      - "8000:5000"
+      - "5000:5000"
     volumes:
-      - .:/app 
-    command: pytest
+      - .:/app
+    environment:
+      FLASK_APP: app.py
 
+  tester:
+    build:
+      context: .  
+      dockerfile: Dockerfile.test  
+    volumes:
+      - .:/app
+    depends_on:
+      - app  
