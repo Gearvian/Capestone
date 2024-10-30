@@ -1,47 +1,44 @@
-name: Deploy to HTTP Servers via Bastion
+name: CD
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run: 
+    workflows: ["CI"]
+    types:
+      - completed    
 
 env:
-  REGISTRY: docker.io
-  IMAGE: gearvian/capestone
-  TAG: ${{ github.sha }}       
-  HTTP_SERVERS: |
-    10.0.2.215
-    10.0.2.214
-  BASTION_IP: 8.213.39.96 
-  SSH_USER: root
-  CONTAINER_NAME: web-container
-
-permissions:
-  contents: read
+  SSH_KEY: ${{ secrets.SSH_KEY }}
+  SSH_USER: ${{ secrets.SSH_USERNAME }}
+  SSH_HOST1: ${{ secrets.Server1 }}
+  SSH_HOST2: ${{ secrets.Server2 }}
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+  deploy1:
+    runs-on: self-hosted
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Deploying to server 1
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > capstone-key.pem
+          chmod 600 capstone-key.pem
+          ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server1 }} << 'EOF'
+          set -e
+          cd /Capstone
+          git pull https://github.com/Gearvian/Capestone.git
+          docker compose up -d --build
+          rm -f capstone-key.pem
+          EOF
 
-    # 1.2 SSH into Bastion with agent forwarding to deploy on HTTP servers
-    - name: Deploy to HTTP Servers via Bastion
-      uses: appleboy/ssh-action@v0.1.4
-      with:
-        host: ${{ env.BASTION_IP }}  # Bastion server's public IP
-        key: ${{ secrets.BASTION_SSH_PRIVATE_KEY }}  # SSH key for bastion, stored in GitHub secrets
-        user: ${{ env.SSH_USER }}  # SSH user for bastion
-        use-ssh-agent: true  # Enable SSH agent forwarding
-        script: |
-          echo "Deploying to servers behind bastion"
-          for server in ${{ env.HTTP_SERVERS }}; do
-            echo "Connecting to $server via bastion using SSH agent forwarding..."
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$server "
-              docker pull $REGISTRY/$IMAGE:$TAG &&
-              docker stop $CONTAINER_NAME || true &&
-              docker rm $CONTAINER_NAME || true &&
-              docker run -d --name $CONTAINER_NAME -p 5000:5000 $REGISTRY/$IMAGE:$TAG
-            "
-          done
+  deploy2:
+    runs-on: self-hosted
+    steps:
+      - name: Deploying to server 2
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > capstone-key.pem
+          chmod 600 capstone-key.pem
+          ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server2}} << 'EOF'
+          set -e
+          cd /Capstone
+          git pull https://github.com/Gearvian/Capestone.git
+          docker compose up -d --build
+          rm -f capstone-key.pem
+          EOF
