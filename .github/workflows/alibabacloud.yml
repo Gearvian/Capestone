@@ -21,6 +21,7 @@ jobs:
           chmod 600 capstone-key.pem
           ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server1 }} << 'EOF'
           set -e
+          cd ..
           cd /Capstone
           git pull https://github.com/Gearvian/Capestone.git
           docker compose up -d --build
@@ -36,6 +37,7 @@ jobs:
           chmod 600 capstone-key.pem
           ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server2}} << 'EOF'
           set -e
+          cd .. 
           cd /Capstone
           git pull https://github.com/Gearvian/Capestone.git
           docker compose up -d --build
