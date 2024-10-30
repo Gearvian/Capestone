@@ -19,15 +19,11 @@ jobs:
         run: |
           echo "${{ secrets.BASTION_SSH_PRIVATE_KEY }}" > capstone-key.pem
           chmod 600 capstone-key.pem
-          ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server1 }} << 'EOF'
-          set -e
+          ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server1 }} 
           cd ..
-          cd /Capstone
+          cd Capestone/
           git pull https://github.com/Gearvian/Capestone.git
           docker compose up -d --build
-          rm -f capstone-key.pem
-          EOF
-
   deploy2:
     runs-on: self-hosted
     steps:
@@ -35,11 +31,8 @@ jobs:
         run: |
           echo "${{ secrets.BASTION_SSH_PRIVATE_KEY }}" > capstone-key.pem
           chmod 600 capstone-key.pem
-          ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server2}} << 'EOF'
-          set -e
+          ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server2}} 
           cd .. 
           cd /Capstone
           git pull https://github.com/Gearvian/Capestone.git
           docker compose up -d --build
-          rm -f capstone-key.pem
-          EOF
