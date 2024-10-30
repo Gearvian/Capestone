@@ -21,7 +21,8 @@ jobs:
             cd ..
             cd Capestone/
             git pull https://github.com/Gearvian/Capestone.git
-            docker-compose up -d --build
+            docker-compose down
+            docker-compose up -d 
           EOF
 
   deploy2:
@@ -35,5 +36,6 @@ jobs:
             cd ..
             cd Capestone/
             git pull https://github.com/Gearvian/Capestone.git
-            docker-compose up -d --build
+            docker-compose down
+            docker-compose up -d 
           EOF
