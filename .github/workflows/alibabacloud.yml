@@ -6,7 +6,7 @@ on:
       - main  
 
 env:
-  SSH_KEY: ${{ secrets.SSH_KEY }}
+  SSH_KEY: ${{ secrets.BASTION_SSH_PRIVATE_KEY }}
   SSH_USER: ${{ secrets.SSH_USERNAME }}
   SSH_HOST1: ${{ secrets.Server1 }}
   SSH_HOST2: ${{ secrets.Server2 }}
@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Deploying to server 1
         run: |
-          echo "${{ secrets.SSH_KEY }}" > capstone-key.pem
+          echo "${{ secrets.BASTION_SSH_PRIVATE_KEY }}" > capstone-key.pem
           chmod 600 capstone-key.pem
           ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server1 }} << 'EOF'
           set -e
@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Deploying to server 2
         run: |
-          echo "${{ secrets.SSH_KEY }}" > capstone-key.pem
+          echo "${{ secrets.BASTION_SSH_PRIVATE_KEY }}" > capstone-key.pem
           chmod 600 capstone-key.pem
           ssh -i capstone-key.pem ${{ secrets.SSH_USERNAME }}@${{ secrets.Server2}} << 'EOF'
           set -e
